@@ -30,6 +30,10 @@ def _get_image_blob(im):
         im_scale_factors (list): list of image scales (relative to im) used
             in the image pyramid
     """
+    # cfg.PIXEL_MEANS=np.array([[[102.9801, 115.9465, 122.7717]]])
+    # cfg.TEST.SCALES=(600,)
+    # cfg.TEST.MAX_SIZE=1000
+
     im_orig = im.astype(np.float32, copy=True)
     im_orig -= cfg.PIXEL_MEANS
 
@@ -118,6 +122,10 @@ def im_detect(net, im, boxes=None):
             background as object category 0)
         boxes (ndarray): R x (4*K) array of predicted bounding boxes
     """
+    # cfg.TEST.HAS_RPN=True
+    # cfg.TEST.SVM=False
+    # cfg.TEST.BBOX_REG=True
+
     blobs, im_scales = _get_blobs(im, boxes)
 
     # When mapping from image ROIs to feature map ROIs, there's some aliasing
@@ -226,6 +234,8 @@ def apply_nms(all_boxes, thresh):
 
 def test_net(net, imdb, max_per_image=100, thresh=0.05, vis=False):
     """Test a Fast R-CNN network on an image database."""
+    # cfg.TEST.HAS_RPN=True
+
     num_images = len(imdb.image_index)
     # all detections are collected into:
     #    all_boxes[cls][image] = N x 5 array of detections in
@@ -259,6 +269,7 @@ def test_net(net, imdb, max_per_image=100, thresh=0.05, vis=False):
         _t['im_detect'].toc()
 
         _t['misc'].tic()
+        # cfg.TEST.NMS=0.3
         # skip j = 0, because it's the background class
         for j in xrange(1, imdb.num_classes):
             inds = np.where(scores[:, j] > thresh)[0]

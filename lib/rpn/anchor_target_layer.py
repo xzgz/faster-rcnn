@@ -143,6 +143,8 @@ class AnchorTargetLayer(caffe.Layer):
                                    np.arange(overlaps.shape[1])]
         gt_argmax_overlaps = np.where(overlaps == gt_max_overlaps)[0]
 
+        # cfg.TRAIN.RPN_CLOBBER_POSITIVES=False
+        # cfg.TRAIN.RPN_NEGATIVE_OVERLAP=0.3
         if not cfg.TRAIN.RPN_CLOBBER_POSITIVES:
             # assign bg labels first so that positive labels can clobber them
             labels[max_overlaps < cfg.TRAIN.RPN_NEGATIVE_OVERLAP] = 0
@@ -151,6 +153,7 @@ class AnchorTargetLayer(caffe.Layer):
         labels[gt_argmax_overlaps] = 1
 
         # fg label: above threshold IOU
+        # cfg.TRAIN.RPN_POSITIVE_OVERLAP=0.7
         labels[max_overlaps >= cfg.TRAIN.RPN_POSITIVE_OVERLAP] = 1
 
         if cfg.TRAIN.RPN_CLOBBER_POSITIVES:
@@ -158,6 +161,8 @@ class AnchorTargetLayer(caffe.Layer):
             labels[max_overlaps < cfg.TRAIN.RPN_NEGATIVE_OVERLAP] = 0
 
         # subsample positive labels if we have too many
+        # cfg.TRAIN.RPN_FG_FRACTION=0.5
+        # cfg.TRAIN.RPN_BATCHSIZE=256
         num_fg = int(cfg.TRAIN.RPN_FG_FRACTION * cfg.TRAIN.RPN_BATCHSIZE)
         fg_inds = np.where(labels == 1)[0]
         if len(fg_inds) > num_fg:
@@ -178,9 +183,11 @@ class AnchorTargetLayer(caffe.Layer):
         bbox_targets = np.zeros((len(inds_inside), 4), dtype=np.float32)
         bbox_targets = _compute_targets(anchors, gt_boxes[argmax_overlaps, :])
 
+        # cfg.TRAIN.RPN_BBOX_INSIDE_WEIGHTS=(1.0, 1.0, 1.0, 1.0)
         bbox_inside_weights = np.zeros((len(inds_inside), 4), dtype=np.float32)
         bbox_inside_weights[labels == 1, :] = np.array(cfg.TRAIN.RPN_BBOX_INSIDE_WEIGHTS)
 
+        # cfg.TRAIN.RPN_POSITIVE_WEIGHT=-1.0
         bbox_outside_weights = np.zeros((len(inds_inside), 4), dtype=np.float32)
         if cfg.TRAIN.RPN_POSITIVE_WEIGHT < 0:
             # uniform weighting of examples (given non-uniform sampling)

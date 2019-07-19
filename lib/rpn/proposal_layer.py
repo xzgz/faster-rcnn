@@ -61,6 +61,15 @@ class ProposalLayer(caffe.Layer):
         assert bottom[0].data.shape[0] == 1, \
             'Only single item batches are supported'
 
+        # cfg.TRAIN.RPN_PRE_NMS_TOP_N=12000
+        # cfg.TRAIN.RPN_POST_NMS_TOP_N=2000
+        # cfg.TRAIN.RPN_NMS_THRESH=0.7
+        # cfg.TRAIN.RPN_MIN_SIZE=16
+
+        # cfg.TEST.RPN_PRE_NMS_TOP_N=6000
+        # cfg.TEST.RPN_POST_NMS_TOP_N=300
+        # cfg.TEST.RPN_NMS_THRESH=0.7
+        # cfg.TEST.RPN_MIN_SIZE=16
         cfg_key = str(self.phase) # either 'TRAIN' or 'TEST'
         pre_nms_topN  = cfg[cfg_key].RPN_PRE_NMS_TOP_N
         post_nms_topN = cfg[cfg_key].RPN_POST_NMS_TOP_N

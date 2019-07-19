@@ -82,6 +82,10 @@ class RoIDataLayer(caffe.Layer):
 
     def setup(self, bottom, top):
         """Setup the RoIDataLayer."""
+        # cfg.TRAIN.IMS_PER_BATCH=1
+        # cfg.TRAIN.SCALES=(600,)
+        # cfg.TRAIN.MAX_SIZE=1000
+        # cfg.TRAIN.HAS_RPN=True
 
         # parse the layer parameter string, which must be valid YAML
         layer_params = yaml.load(self.param_str_)

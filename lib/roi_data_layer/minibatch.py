@@ -17,6 +17,9 @@ def get_minibatch(roidb, num_classes):
     """Given a roidb, construct a minibatch sampled from it."""
     num_images = len(roidb)
     # Sample random scales to use for each image in this batch
+    # cfg.TRAIN.SCALES=(600,)
+    # cfg.TRAIN.BATCH_SIZE=128
+    # cfg.TRAIN.FG_FRACTION=0.25
     random_scale_inds = npr.randint(0, high=len(cfg.TRAIN.SCALES),
                                     size=num_images)
     assert(cfg.TRAIN.BATCH_SIZE % num_images == 0), \
@@ -130,6 +133,9 @@ def _get_image_blob(roidb, scale_inds):
     """Builds an input blob from the images in the roidb at the specified
     scales.
     """
+    # cfg.TRAIN.SCALES=(600,)
+    # cfg.PIXEL_MEANS=np.array([[[102.9801, 115.9465, 122.7717]]])
+    # cfg.TRAIN.MAX_SIZE=1000
     num_images = len(roidb)
     processed_ims = []
     im_scales = []
